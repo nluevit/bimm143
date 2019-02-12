@@ -2,7 +2,7 @@
 title: "Class9"
 author: "Nasha Luevit"
 date: "February 7, 2019"
-output: GitHub_document
+output: github_document
 ---
 
 Unsupervised Learning Analysis of Human Breast Cancer Cells
