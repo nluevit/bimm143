@@ -1,0 +1,204 @@
+---
+title: "Class9"
+author: "Nasha Luevit"
+date: "February 7, 2019"
+output: html_document
+---
+
+Unsupervised Learning Analysis of Human Breast Cancer Cells
+
+# Exploratory Data Analysis
+```{r}
+wisc.df <- read.csv("WisconsinCancer.csv")
+fna.data <- "WisconsinCancer.csv"
+```
+
+How many samples (i.e. patients) are in this data-set
+```{r}
+dim(wisc.df)
+```
+
+Next use as.matrix() to convert the other features (i.e. columns) of the data (in columns 3 through 32) to a matrix. Store this in a variable called wisc.data.
+```{r}
+# Convert the features of the data: wisc.data
+wisc.data <- as.matrix(wisc.df[,3:32])
+```
+
+Add rownames to our new matrix of data
+```{r}
+rownames(wisc.data) <- wisc.df$id
+```
+
+How many cancer (M) and non cancer samples do we have in our data-set? 
+```{r}
+table(wisc.df$diagnosis)
+```
+
+Set up new diagnosis vector
+```{r}
+diagnosis <- as.numeric(wisc.df$diagnosis == "M")
+```
+
+Q1. How many observations are in this dataset?
+```{r}
+nrow(wisc.data)
+```
+
+Q2. How many variables/features in the data are suffixed with _mean?
+```{r}
+colnames(wisc.data)
+
+grep("_mean", colnames(wisc.data))
+
+inds <- grep("_mean", colnames(wisc.data))
+length(inds)
+```
+
+Q3. How many of the observations have a malignant diagnosis?
+```{r}
+sum(diagnosis)
+```
+
+# Principal Component Analysis 
+
+Check the mean and standard deviation of the features (i.e. columns) of the wisc.data to determine if the data should be scaled. Use the colMeans() and apply() functions like you’ve done before.
+```{r}
+colMeans(wisc.data)
+apply(wisc.data, 2, sd)
+```
+
+
+Execute PCA with the prcomp() function on the wisc.data, scaling if appropriate, and assign the output model to  wisc.pr.
+```{r}
+wisc.pr <- prcomp(wisc.data, scale = TRUE)
+```
+
+Inspect results
+```{r}
+summary(wisc.pr)
+```
+
+Q4. From your results, what proportion of the original variance is captured by the first principal components (PC1)?
+  0.4427
+  
+Q5. How many principal components (PCs) are required to describe at least 70% of the original variance in the data?
+  3
+  
+Q6. How many principal components (PCs) are required to describe at least 90% of the original variance in the data?
+  7
+  
+Plot results 
+```{r}
+biplot(wisc.pr)
+```
+
+Need to make our own PCA plot
+```{r}
+plot(wisc.pr$x[,1], wisc.pr$x[,2], col = (diagnosis+1), xlab = "PC1", ylab = "PC2")
+#0 has the color white, so 1 is added to diagnosis to change color to black; black changes to red (2)
+```
+
+Q8. Generate a similar plot for principal components 1 and 3. What do you notice about these plots?
+```{r}
+plot(wisc.pr$x[,1], wisc.pr$x[,3], col = (diagnosis+1), xlab = "PC1", ylab = "PC3")
+```
+
+##Variance captured in each PC
+
+This info is in the $sdev component of our PCA result
+```{r}
+#variance captured in each component
+pr.var <- variance <- wisc.pr$sdev^2
+#Variance explained by each principal component: pve
+pve <- variance/sum(variance)
+```
+
+Plot variance explained for each principal component
+```{r}
+plot(pve, xlab = "Principal Component", 
+     ylab = "Proportion of Variance Explained", 
+     ylim = c(0, 1), type = "o")
+```
+
+Make plot fancier :)
+```{r}
+barplot(pve, ylab = "Precent of Variance Explained",
+     names.arg=paste0("PC",1:length(pve)), las=2, axes = FALSE)
+axis(2, at=pve, labels=round(pve,2)*100 )
+```
+
+# Hierarchical Clustering
+For hierarchical clustering we neeed
+1. Distance matrix **dist()** function
+2. The **hclust()** function
+3. Use the **cutree()** function 
+
+Scale the wisc.data data
+```{r}
+data.scaled <- scale(wisc.data) 
+```
+
+Calculate the (Euclidean) distances between all pairs of observations in the new scaled dataset
+```{r}
+data.dist <- dist(data.scaled)
+```
+
+
+Create a hierarchical clustering model using complete linkage. Manually specify the method argument to hclust() and assign the results to wisc.hclust.
+```{r}
+wisc.hclust <- hclust(data.dist, method = "complete")
+```
+
+```{r}
+plot(wisc.hclust)
+```
+
+#Clustering on PCA Results
+For clustering we need
+1. Distance matrix
+2. Clustering function
+3. Cutree
+
+This was PCA result of PC1 vs. PC2
+```{r}
+plot(wisc.pr$x[,1], wisc.pr$x[,2], col = (diagnosis+1))
+```
+
+So
+```{r}
+pc.dist <- dist(wisc.pr$x[ ,1:2])
+pc.hclust <- hclust(pc.dist, method = "ward.D2")
+plot(pc.hclust)
+```
+
+Cut tree
+```{r}
+groups3 <- cutree(pc.hclust, k = 3)
+table(groups3)
+```
+
+```{r}
+#you can cross tabulate between two vectors 
+table(groups3, diagnosis)
+```
+
+Plot
+```{r}
+plot(wisc.pr$x[,1], wisc.pr$x[,2], col = groups3)
+```
+
+# Prediction
+
+We will use the **predict()** function that will take our PCA model from before and new cancer cell data and project that data onto our PCA space.
+```{r}
+new <- read.csv("new_samples.csv")
+npc <- predict(wisc.pr, newdata = new)
+npc
+```
+
+```{r}
+plot(wisc.pr$x[,1:2], col = groups3)
+points(npc[,1], npc[,2], col = "blue", pch = 15, cex = 2)
+```
+
+
