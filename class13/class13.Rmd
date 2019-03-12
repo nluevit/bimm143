@@ -1,0 +1,66 @@
+---
+title: "Class13"
+author: "Nasha Luevit"
+date: "February 19, 2019"
+output: html_document
+---
+
+Hands-On Worksheet
+
+# Obtaining and inspecting our input structure
+
+```{r}
+#load package and download entry
+library(bio3d)
+file.name <- get.pdb("1hsg")
+```
+
+```{r}
+#read file
+hiv <- read.pdb(file.name)
+hiv
+```
+
+# Prepare initial protein and ligand input files
+
+```{r}
+#clean up file 
+prot <- trim.pdb(hiv, "protein")
+prot
+lig <- trim.pdb(hiv, "ligand") 
+lig
+write.pdb(prot, file = "1hsg_protein.pdb")
+write.pdb(lig, file = "1hsg_ligand.pdb")
+```
+
+# Use AutoDockTools to setup protein docking input
+Prepare protein and ligand; set up charge
+Prepare docking configuration profile 
+
+# Dock ligands into HIV-1 protease
+
+# Inspect docking results 
+```{r}
+library(bio3d)
+res <- read.pdb("all.pdbqt", multi = TRUE)
+write.pdb(res, "results.pdb")
+```
+
+## Normal Mode Analysis
+
+```{r}
+pdb <- read.pdb("1HEL")
+
+modes <- nma(pdb)
+plot(modes)
+```
+
+```{r}
+mktrj(modes, mode = 7, file = "nma_7.pdb")
+```
+
+
+
+
+
+
