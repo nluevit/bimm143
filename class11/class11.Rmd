@@ -1,0 +1,69 @@
+---
+title: "Class11"
+output: github_document
+---
+
+## Section 1: The PBD
+```{r}
+pdbdata <- read.csv("Data Export Summary.csv")
+pdbdata
+```
+
+Determine the percentage of structures solved by X-Ray and Electron Microscopy
+```{r}
+percent.xray <- pdbdata$Total[1]/sum(pdbdata$Total) * 100
+percent.EM <- pdbdata$Total[3]/sum(pdbdata$Total) * 100
+percent.xray
+percent.EM
+```
+
+
+What proportion of structures are protein?
+```{r}
+num.total <- sum(pdbdata$Total)
+num.proteins <- sum(pdbdata$Proteins)
+num.proteins/num.total 
+```
+
+
+## Section 3: Introduction to Bio3D in R
+
+First, load package we want to use
+```{r}
+library(bio3d)
+```
+
+Access on-line PDB file
+```{r}
+pdb <- read.pdb("1hsg")
+pdb
+```
+
+We want to select out the protein and drug only parts of these molecular PDB files
+```{r}
+prot.inds <- atom.select(pdb, "protein")
+prot.inds
+```
+
+```{r}
+pdb$atom[prot.inds$atom,]
+```
+
+```{r}
+prot.pdb <- trim.pdb(pdb, prot.inds)
+write.pdb(prot.pdb, file = "protein.pdb")
+```
+
+Do the same thing for our drug
+```{r}
+lig.inds <- atom.select(pdb, "ligand")
+lig.pdb <- trim.pdb(pdb, lig.inds)
+write.pdb(lig.pdb, file = "ligand.pdb")
+```
+
+Plotting stuff
+```{r}
+#library("bio3d.view")
+#View(pdb)
+```
+
