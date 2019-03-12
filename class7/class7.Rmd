@@ -1,0 +1,131 @@
+---
+title: 'Class 7: Functions and Packages'
+author: "Nasha Luevit"
+date: "January 29, 2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Functions Revisit
+
+```{r}
+source("http://tinyurl.com/rescale-R")
+```
+
+Try the **rescale()** function
+
+```{r}
+rescale( c(1, 5, 10) )
+```
+
+Try **rescale2()** with the stop() function catch for non-numeric input 
+
+```{r}
+#rescale2( c(1:5, "string"))
+#doesn't work
+```
+
+Functions practice 
+```{r}
+x <- c(3, 7, NA, 4, 8, NA)
+which( is.na(x) )
+```
+
+# Define an example x and y
+
+```{r}
+x <- c( 1, 2, NA, 3, NA)
+y <- c(NA, 3, NA, 3, 4)
+is.na(x)
+sum( is.na(x) )
+is.na(y)
+sum( is.na(y) )
+```
+
+#Put it together 
+
+```{r}
+is.na(x)
+is.na(y)
+is.na(x) & is.na(y)
+sum( is.na(x) & is.na(y))
+```
+
+Take working snippet and make first function
+
+```{r}
+both_na <- function(x, y) {
+  sum( is.na(x) & is.na(y) ) 
+}
+```
+
+```{r}
+both_na(x,y)
+```
+
+```{r}
+x <- c(NA, NA, NA)
+y1 <- c( 1, NA, NA)
+y2 <- c( 1, NA, NA, NA)
+y3 <- c(1, NA, NA, NA, NA)
+```
+
+```{r}
+both_na(x, y2)
+```
+
+```{r}
+both_na(x, y3)
+```
+
+```{r}
+both_na2 <- function(x, y) {
+ if(length(x) != length(y)) {
+ stop("Input x and y should be the same length")
+ }
+ sum( is.na(x) & is.na(y) )
+}
+```
+
+```{r}
+#both_na2(x, y2)
+#error
+```
+
+```{r}
+both_na3 <- function(x, y) {
+ if(length(x) != length(y)) {
+ stop("Input x and y should be vectors of the same length")
+ }
+
+ na.in.both <- ( is.na(x) & is.na(y) )
+ na.number <- sum(na.in.both)
+ na.which <- which(na.in.both)
+ message("Found ", na.number, " NA's at position(s):",
+ paste(na.which, collapse=", ") )
+
+ return( list(number=na.number, which=na.which) )
+}
+```
+
+```{r}
+both_na3(x, y1)
+```
+
+#Install package
+
+```{r}
+#install.packages("shiny")
+```
+
+```{r}
+library(shiny)
+```
+
+```{r}
+?shiny
+```
+
