@@ -9,3 +9,4 @@ This is a store of my classwork for [BIMM143](https://bioboot.github.io/bimm143_
 
 -Class09 [Unsupervised Learning Mini-Project](https://github.com/nluevit/bimm143/blob/master/class9/class9.Rmd)
 
+-Class13 [Bioinformatics in Drug Discovery and Design](https://github.com/nluevit/bimm143/blob/master/class13/class13.Rmd)
