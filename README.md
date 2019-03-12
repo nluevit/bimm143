@@ -4,5 +4,5 @@ This is a store of my classwork for [BIMM143](https://bioboot.github.io/bimm143_
 
 ## Contents
 -Class04 [Introduction to R]()
--Class05 [R Graphics](https://github.com/nluevit/bimm143/blob/master/class5/class5.Rmd) 
+-Class05 [R Graphics](https://github.com/nluevit/bimm143/blob/master/class5/class5.R) 
 -Class06 
